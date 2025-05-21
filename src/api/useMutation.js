@@ -12,13 +12,14 @@ export default function useMutation(method, resource, tagsToInvalidate) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const mutate = async (body) => {
+  const mutate = async (body, resourceOverride) => {
     setLoading(true);
     setError(null);
     try {
-      const result = await request(resource, {
+      const url = resourceOverride || resource;
+      const result = await request(url, {
         method,
-        body: JSON.stringify(body),
+        ...(body ? {body: JSON.stringify(body)} : {}),
       });
       setData(result);
       invalidateTags(tagsToInvalidate);
